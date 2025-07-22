@@ -1,0 +1,108 @@
+
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Complaint</title>
+    {% block head %}
+    <style>
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 25px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #custom-category-div {
+            display: none;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+<div class="container">
+    {% for message in messages %}
+    <h2>Submit a Complaint{{message}}</h2>
+    {% endfor %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="id_title">Title</label>
+        {{ form.title }}
+
+        <label for="id_description">Description</label>
+        {{ form.description }}
+
+        <label for="id_department">Office</label>
+        {{ form.department }}
+        
+        <div class="acaddeptwrap">
+        <label for="id_acad_category">Academic Department</label>
+        {{ form.acad_dept }}
+        </div>
+        
+        <label for="id_incident_date">Incident Date & Time</label>
+        {{ form.incident_timestamp }}
+
+        <label for="id_evidence">Evidence File (Optional)</label>
+        {{ form.evidence }}
+
+        <button type="submit">Submit Complaint</button>
+    </form>
+</div>
+
+<script>
+    const customCategoryDiv = document.getElementById("custom-category-div");
+    const acaddept = document.getElementById("id_acad_dept");
+    const idcat = document.querySelector("#id_department")
+    changeAcad()
+
+    idcat.addEventListener('change', changeAcad)
+    function changeAcad() {
+        if (idcat.options[idcat.options.selectedIndex].innerText === "Academics")
+        {
+            acaddept.setAttribute("required", "")   
+            document.querySelector(".acaddeptwrap").style.display = "block"
+        }
+        else
+        {
+            acaddept.removeAttribute("required")
+            document.querySelector(".acaddeptwrap").style.display = "none"
+        }
+    }
+</script>
+{% endblock %}
+</body>
+</html>

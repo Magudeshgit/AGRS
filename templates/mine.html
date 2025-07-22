@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Complaints</h2>
+
+    {% if complaints %}
+        {% for complaint in complaints %}
+            <div class="card mb-4 shadow-sm border-left-{{ complaint.status|lower }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ complaint.title }}</h5>
+                    <p class="card-text"><strong>Status:</strong> {{ complaint.status|capfirst }}</p>
+                    <p class="card-text"><strong>Department:</strong> {{ complaint.department }}</p>
+                    <p class="card-text"><strong>Category:</strong> {{ complaint.category }}</p>
+                    <p class="card-text"><strong>Description:</strong> {{ complaint.description }}</p>
+                    <p class="card-text"><strong>Submitted on:</strong> {{ complaint.created_at|date:"Y-m-d H:i" }}</p>
+
+                    {% if complaint.evidence %}
+                        <p class="card-text">
+                            <strong>Evidence:</strong>
+                            <a href="{{ complaint.evidence.url }}" target="_blank">View File</a>
+                        </p>
+                    {% endif %}
+
+                    {% if complaint.status == "in_progress" %}
+                        <hr>
+                        <h6>📩 Department Response</h6>
+                        <p><strong>Message:</strong> {{ complaint.department_response }}</p>
+
+                        {% if complaint.response_evidence %}
+                            <p><strong>Response Evidence:</strong>
+                                <a href="{{ complaint.response_evidence.url }}" target="_blank">View File</a>
+                            </p>
+                        {% endif %}
+
+                        {% if complaint.resolution_deadline %}
+                            <p><strong>Resolution Deadline:</strong> {{ complaint.resolution_deadline }}</p>
+                        {% endif %}
+
+                        <form method="post" action="{% url 'acknowledge_complaint' complaint.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-success btn-sm" name="action" value="close">✅ Close Complaint</button>
+                            <button class="btn btn-danger btn-sm" name="action" value="escalate">⚠️ Escalate</button>
+                        </form>
+                    {% elif complaint.status == "resolved" %}
+                        <div class="alert alert-success mt-3">✅ Complaint has been resolved.</div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No complaints submitted yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

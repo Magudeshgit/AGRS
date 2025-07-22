@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Respond to Complaint</h2>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ complaint.title }}</h5>
+            <p class="card-text"><strong>Description:</strong> {{ complaint.description }}</p>
+            <p class="card-text"><strong>Submitted by:</strong> {{ complaint.user.username }}</p>
+            <p class="card-text"><strong>Category:</strong> {{ complaint.category }}</p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Submit Response</button>
+    </form>
+</div>
+{% endblock %}
